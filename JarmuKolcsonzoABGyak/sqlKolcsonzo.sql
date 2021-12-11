@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[Kolcsonzo]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
+	[IRSZ] VARCHAR(4) NOT NULL FOREIGN KEY REFERENCES [Telepules]([IRSZ]),
+	[Kozterulet] VARCHAR(64) NOT NULL,
+	[KozteruletJellege] INT NOT NULL,
+	[Hazszam] VARCHAR(16) NOT NULL,
+	[Megnevezes] VARCHAR(64) NOT NULL
+)
