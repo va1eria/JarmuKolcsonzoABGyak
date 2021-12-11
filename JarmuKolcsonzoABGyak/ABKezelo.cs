@@ -180,7 +180,57 @@ namespace JarmuKolcsonzoABGyak
             }
         }
 
-        public static void JarmuFelvitel(Kolcsonzo kolcsonzo, Jarmu uj) { }
+        public static void JarmuFelvitel(Kolcsonzo kolcsonzo, Jarmu uj) 
+        {
+            Csatlakozas();
+            try
+            {
+                command.Transaction = connection.BeginTransaction();
+                command.CommandText = "INSERT INTO [Jarmu] VALUES (@rend, @marka, @tipus, @fut, @kolcs, @kid)";
+                command.Parameters.AddWithValue("@rend", uj.Rendszam);
+                command.Parameters.AddWithValue("@marka", uj.Marka);
+                command.Parameters.AddWithValue("@fut", uj.FutottKM);
+                command.Parameters.AddWithValue("@kolcs", uj.Kolcsonozve);
+                command.Parameters.AddWithValue("@kid", kolcsonzo.Id);
+                command.ExecuteNonQuery();
+
+                command.Parameters.Clear();
+                command.Parameters.AddWithValue("@rend", uj.Rendszam);
+                if (uj is Auto auto)
+                {
+                    command.CommandText = "INSERT INTO [Auto] VALUES (@rend, @atip, @szal)";
+                    command.Parameters.AddWithValue("@atip", (int)auto.AutoTipusa);
+                    command.Parameters.AddWithValue("@szal", auto.SzallithatoSzemSzam);
+                }
+                else if (uj is Motor motor)
+                {
+                    command.CommandText = "INSERT INTO [Motor] VALUES (@rend, @henger)";
+                    command.Parameters.AddWithValue("@henger", motor.Hengerurtartalom);
+                }
+                command.ExecuteNonQuery();
+                command.Transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    if (command.Transaction != null)
+                    {
+                        command.Transaction.Rollback();
+                    }
+
+                }
+                catch (Exception ex2)
+                {
+                    throw new ABKivetel("Vegzetes hiba az adatbazisban! Ertesitse a rendszergazdat!", ex2);
+                }
+                throw new ABKivetel("Sikertelen jarmu felvitel!", ex);
+            }
+            finally
+            {
+                KapcsolatBontas();
+            }
+        }
 
         public static void JarmuModositas(Jarmu modosit) { }
 
