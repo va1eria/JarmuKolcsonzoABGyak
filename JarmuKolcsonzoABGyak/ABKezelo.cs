@@ -141,7 +141,7 @@ namespace JarmuKolcsonzoABGyak
             }
         }
 
-        public static void KolcsonzoTorles(Kolcsonzo torol) 
+        public static void KolcsonzoTorles(Kolcsonzo torol)
         {
             Csatlakozas();
             try
@@ -180,7 +180,7 @@ namespace JarmuKolcsonzoABGyak
             }
         }
 
-        public static void JarmuFelvitel(Kolcsonzo kolcsonzo, Jarmu uj) 
+        public static void JarmuFelvitel(Kolcsonzo kolcsonzo, Jarmu uj)
         {
             Csatlakozas();
             try
@@ -232,7 +232,7 @@ namespace JarmuKolcsonzoABGyak
             }
         }
 
-        public static void JarmuModositas(Jarmu modosit) 
+        public static void JarmuModositas(Jarmu modosit)
         {
             Csatlakozas();
             try
@@ -253,7 +253,7 @@ namespace JarmuKolcsonzoABGyak
             }
         }
 
-        public static void JarmuTorles(Jarmu torol) 
+        public static void JarmuTorles(Jarmu torol)
         {
             Csatlakozas();
             try
@@ -288,7 +288,68 @@ namespace JarmuKolcsonzoABGyak
             }
         }
 
-        public static List<Kolcsonzo> TeljesFelolvasas() { return null; }
+        public static List<Kolcsonzo> TeljesFelolvasas()
+        {
+            Csatlakozas();
+            try
+            {
+                command.CommandText = "SELECT *, [Auto].[Rendszam] AS [Autorendszam], [Motor].[Rendszam] AS [Motorrendszam] FROM [Kolcsonzo] LEFT JOIN [Jarmu] ON [Kolcsonzo].[Id] = [Jarmu].[KolcsonzoId] LEFT JOIN [Telepules] ON [Kolcsonzo].[IRSZ] = [Telepules].[IRSZ] LEFT JOIN [Auto] ON [Jarmu].[Rendszam] = [Auto].[Rendszam] LEFT JOIN [Motor] ON [Jarmu].[Rendszam] = [Motor].[Rendszam]";
+                List<Kolcsonzo> kolcsonzok = new List<Kolcsonzo>();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (kolcsonzok.Count == 0 || kolcsonzok.Last().Id != (int)reader["Id"])
+                        {
+                            kolcsonzok.Add(new Kolcsonzo(
+                                        (int)reader["Id"],
+                                        reader["Megnevezes"].ToString(),
+                                        new Cim(
+                                            reader["Telepules"].ToString(),
+                                            reader["Kozterulet"].ToString(),
+                                            reader["Hazszam"].ToString(),
+                                            short.Parse(reader["IRSZ"].ToString()),
+                                            (KozteruletJelleg)(int)reader["KozteruletJellege"]
+                                           )
+                                ));
+                        }
+                        if (!reader.IsDBNull(reader.GetOrdinal("Autorendszam")))
+                        {
+                            kolcsonzok.Last().Jarmuvek.Add(new Auto(
+                                    reader["Rendszam"].ToString(),
+                                    reader["Marka"].ToString(),
+                                    reader["Tipus"].ToString(),
+                                    (int)reader["FutottKM"],
+                                    (int)reader["Kolcsonozve"] == 1,
+                                    (AutoTipus)(int)reader["AutoTipusa"],
+                                    (byte)reader["SzallithatoSzemSzam"]
+                                ));
+                        }
+                        else if (!reader.IsDBNull(reader.GetOrdinal("Motorrendszam")))
+                        {
+                            kolcsonzok.Last().Jarmuvek.Add(new Motor(
+                                    reader["Rendszam"].ToString(),
+                                    reader["Marka"].ToString(),
+                                    reader["Tipus"].ToString(),
+                                    (int)reader["FutottKM"],
+                                    (int)reader["Kolcsonozve"] == 1,
+                                    (double)reader["Hengerurtartalom"]
+                                ));
+                        }
+                    }
+                    reader.Close();
+                }
+                return kolcsonzok;
+            }
+            catch (Exception ex)
+            {
+                throw new ABKivetel("Sikertelen lekerdezes!", ex);
+            }
+            finally
+            {
+                KapcsolatBontas();
+            }
+        }
 
     }
 }
