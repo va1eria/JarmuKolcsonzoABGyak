@@ -141,7 +141,44 @@ namespace JarmuKolcsonzoABGyak
             }
         }
 
-        public static void KolcsonzoTorles(Kolcsonzo torol) { }
+        public static void KolcsonzoTorles(Kolcsonzo torol) 
+        {
+            Csatlakozas();
+            try
+            {
+                command.Transaction = connection.BeginTransaction();
+                command.CommandText = "DELETE FROM [Auto] WHERE [Rendszam] IN (SELECT [Rendszam] FROM [Jarmu] WHERE [KolcsonzoId] = @id)";
+                command.Parameters.AddWithValue("@id", torol.Id);
+                command.ExecuteNonQuery();
+                command.CommandText = "DELETE FROM [Motor] WHERE [Rendszam] IN (SELECT [Rendszam] FROM [Jarmu] WHERE [KolcsonzoId] = @id)";
+                command.ExecuteNonQuery();
+                command.CommandText = "DELETE FROM [Jarmu] WHERE [KolcsonzoId] = @id";
+                command.ExecuteNonQuery();
+                command.CommandText = "DELETE FROM [Kolcsonzo] WHERE [Id] = @id";
+                command.ExecuteNonQuery();
+                command.Transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    if (command.Transaction != null)
+                    {
+                        command.Transaction.Rollback();
+                    }
+
+                }
+                catch (Exception ex2)
+                {
+                    throw new ABKivetel("Vegzetes hiba az adatbazisban! Ertesitse a rendszergazdat!", ex2);
+                }
+                throw new ABKivetel("Sikertelen kolcsonzo torles!", ex);
+            }
+            finally
+            {
+                KapcsolatBontas();
+            }
+        }
 
         public static void JarmuFelvitel(Kolcsonzo kolcsonzo, Jarmu uj) { }
 
