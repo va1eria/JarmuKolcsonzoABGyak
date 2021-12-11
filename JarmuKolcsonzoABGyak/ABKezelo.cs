@@ -232,7 +232,26 @@ namespace JarmuKolcsonzoABGyak
             }
         }
 
-        public static void JarmuModositas(Jarmu modosit) { }
+        public static void JarmuModositas(Jarmu modosit) 
+        {
+            Csatlakozas();
+            try
+            {
+                command.CommandText = "UPDATE [Jarmu] SET [FutottKM] = @fut, [Kolcsonozve] = @kolcs WHERE [Rendszam] = @rend";
+                command.Parameters.AddWithValue("@fut", modosit.FutottKM);
+                command.Parameters.AddWithValue("@kolcs", modosit.Kolcsonozve);
+                command.Parameters.AddWithValue("@rend", modosit.Rendszam);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new ABKivetel("Sikertelen jarmu modositas!", ex);
+            }
+            finally
+            {
+                KapcsolatBontas();
+            }
+        }
 
         public static void JarmuTorles(Jarmu torol) { }
 
