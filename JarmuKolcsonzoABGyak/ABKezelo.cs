@@ -253,7 +253,40 @@ namespace JarmuKolcsonzoABGyak
             }
         }
 
-        public static void JarmuTorles(Jarmu torol) { }
+        public static void JarmuTorles(Jarmu torol) 
+        {
+            Csatlakozas();
+            try
+            {
+                command.Transaction = connection.BeginTransaction();
+                command.CommandText = $"DELETE FROM [{((torol is Auto) ? "Auto" : "Motor")}] WHERE [Rendszam] = @rend";
+                command.Parameters.AddWithValue("@rend", torol.Rendszam);
+                command.ExecuteNonQuery();
+                command.CommandText = "DELETE FROM [Jarmu] WHERE [Rendszam] = @rend";
+                command.ExecuteNonQuery();
+                command.Transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    if (command.Transaction != null)
+                    {
+                        command.Transaction.Rollback();
+                    }
+
+                }
+                catch (Exception ex2)
+                {
+                    throw new ABKivetel("Vegzetes hiba az adatbazisban! Ertesitse a rendszergazdat!", ex2);
+                }
+                throw new ABKivetel("Sikertelen jarmu torles!", ex);
+            }
+            finally
+            {
+                KapcsolatBontas();
+            }
+        }
 
         public static List<Kolcsonzo> TeljesFelolvasas() { return null; }
 
