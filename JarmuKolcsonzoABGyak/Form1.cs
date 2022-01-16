@@ -15,6 +15,7 @@ namespace JarmuKolcsonzoABGyak
         public Form1()
         {
             InitializeComponent();
+            LBFrissit();
         }
 
         void LBFrissit()
@@ -45,7 +46,7 @@ namespace JarmuKolcsonzoABGyak
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            KolcsonzoFrm frm=new KolcsonzoFrm();
+            KolcsonzoFrm frm = new KolcsonzoFrm();
             if (frm.ShowDialog() == DialogResult.OK)
             {
                 LBFrissit();
@@ -54,7 +55,7 @@ namespace JarmuKolcsonzoABGyak
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (listBox1.SelectedIndex!=-1)
+            if (listBox1.SelectedIndex != -1)
             {
                 KolcsonzoFrm frm = new KolcsonzoFrm((Kolcsonzo)listBox1.SelectedItem);
                 if (frm.ShowDialog() == DialogResult.OK)
@@ -68,7 +69,7 @@ namespace JarmuKolcsonzoABGyak
         {
             try
             {
-                if (listBox1.SelectedIndex!=-1)
+                if (listBox1.SelectedIndex != -1)
                 {
                     ABKezelo.KolcsonzoTorles((Kolcsonzo)listBox1.SelectedItem);
                     LBFrissit();
@@ -77,6 +78,47 @@ namespace JarmuKolcsonzoABGyak
             catch (ABKivetel ex)
             {
                 MessageBox.Show(ex.Message, "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedIndex != -1)
+            {
+                JarmuFrm frm = new JarmuFrm((Kolcsonzo)listBox1.SelectedItem);
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    LBFrissit();
+                }
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (listBox2.SelectedIndex != -1)
+            {
+                JarmuFrm frm = new JarmuFrm((Jarmu)listBox2.SelectedItem);
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    LBFrissit();
+                }
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (listBox2.SelectedIndex != -1)
+                {
+                    ABKezelo.JarmuTorles((Jarmu)listBox2.SelectedItem);
+                    LBFrissit();
+                }
+            }
+            catch (ABKivetel ex)
+            {
+                MessageBox.Show(ex.Message, "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             }
         }
     }

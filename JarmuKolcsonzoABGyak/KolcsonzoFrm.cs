@@ -20,7 +20,7 @@ namespace JarmuKolcsonzoABGyak
             comboBox1.DataSource = Enum.GetValues(typeof(KozteruletJelleg));
         }
 
-        internal KolcsonzoFrm(Kolcsonzo modosit)
+        internal KolcsonzoFrm(Kolcsonzo modosit) : this()
         {
             kolcsonzo = modosit;
             textBox1.Text = kolcsonzo.Megnevezes;
@@ -62,7 +62,7 @@ namespace JarmuKolcsonzoABGyak
             }
             catch (ABKivetel ex)
             {
-                MessageBox.Show(ex.Message, "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.InnerException.Message, "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 DialogResult = DialogResult.None;
             }
             catch (ArgumentException ex)

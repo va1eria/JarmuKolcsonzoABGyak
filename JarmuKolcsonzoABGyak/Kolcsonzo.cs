@@ -33,7 +33,7 @@ namespace JarmuKolcsonzoABGyak
             get => id;
             set
             {
-                if (id == 0)
+                if (id == null)
                 {
                     id = value;
                 }

@@ -320,7 +320,7 @@ namespace JarmuKolcsonzoABGyak
                                     reader["Marka"].ToString(),
                                     reader["Tipus"].ToString(),
                                     (int)reader["FutottKM"],
-                                    (int)reader["Kolcsonozve"] == 1,
+                                    bool.Parse(reader["Kolcsonozve"].ToString()),
                                     (AutoTipus)(int)reader["AutoTipusa"],
                                     (byte)reader["SzallithatoSzemSzam"]
                                 ));
@@ -332,7 +332,7 @@ namespace JarmuKolcsonzoABGyak
                                     reader["Marka"].ToString(),
                                     reader["Tipus"].ToString(),
                                     (int)reader["FutottKM"],
-                                    (int)reader["Kolcsonozve"] == 1,
+                                    bool.Parse(reader["Kolcsonozve"].ToString()),
                                     (double)reader["Hengerurtartalom"]
                                 ));
                         }
