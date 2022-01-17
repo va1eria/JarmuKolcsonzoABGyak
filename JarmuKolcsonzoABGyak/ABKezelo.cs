@@ -52,6 +52,7 @@ namespace JarmuKolcsonzoABGyak
             using (SqlDataReader reader = command.ExecuteReader())
             {
                 voltIlyen = reader.HasRows;
+                reader.Close();
             }
             if (!voltIlyen)
             {
@@ -116,6 +117,7 @@ namespace JarmuKolcsonzoABGyak
                 command.Parameters.AddWithValue("@koztj", (int)modosit.Cim.KozteruletJellege);
                 command.Parameters.AddWithValue("@hsz", modosit.Cim.Hazszam);
                 command.Parameters.AddWithValue("@irsz", modosit.Cim.Irsz.ToString());
+                command.Parameters.AddWithValue("@id", modosit.Id);
                 command.ExecuteNonQuery();
                 command.Transaction.Commit();
             }
@@ -189,6 +191,7 @@ namespace JarmuKolcsonzoABGyak
                 command.CommandText = "INSERT INTO [Jarmu] VALUES (@rend, @marka, @tipus, @fut, @kolcs, @kid)";
                 command.Parameters.AddWithValue("@rend", uj.Rendszam);
                 command.Parameters.AddWithValue("@marka", uj.Marka);
+                command.Parameters.AddWithValue("@tipus", uj.Tipus);
                 command.Parameters.AddWithValue("@fut", uj.FutottKM);
                 command.Parameters.AddWithValue("@kolcs", uj.Kolcsonozve);
                 command.Parameters.AddWithValue("@kid", kolcsonzo.Id);
@@ -224,7 +227,9 @@ namespace JarmuKolcsonzoABGyak
                 {
                     throw new ABKivetel("Vegzetes hiba az adatbazisban! Ertesitse a rendszergazdat!", ex2);
                 }
-                throw new ABKivetel("Sikertelen jarmu felvitel!", ex);
+                //throw new ABKivetel("Sikertelen jarmu felvitel!", ex);
+                throw new ABKivetel(ex.InnerException.Message, ex);
+
             }
             finally
             {
